@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.AddvMapper">
+	<resultMap type="com.contract.entity.Addv" id="addvMapper" >
+		<id column="adcd" property="adCd"/>
+		<result column="tpnm" property="tpNm"/>
+	</resultMap>
+	<select id="getAddvByAdcd" parameterType="string" resultMap="addvMapper">
+		select adcd,tpnm from addv where adcd=#{adcd}
+	</select>
+	<select id="getAddv" resultMap="addvMapper">
+		select adcd,tpnm from addv
+	</select>
+</mapper>

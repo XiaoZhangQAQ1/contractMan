@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.RoleMapper">
+	<resultMap id="RoleMapper" type="com.shiro.entity.Role" >
+	    <id column="rid" property="rid" />
+	    <result column="rolename" property="roleName" jdbcType="VARCHAR" />
+	    <result column="type" property="type" jdbcType="VARCHAR" />
+	    <result column="description" property="description"/>
+	    <collection property="userList" column="id" fetchType="lazy" select="com.dao.UserMapper.getUserByRid"/>
+  	</resultMap>
+	<select id="getRolesByUid" parameterType="string" resultMap="RoleMapper">
+		select r.rid,rolename,description from roles r
+							join users_roles ur on r.rid=ur.rid
+							where uid=#{uid}
+	</select>
+	
+	<select id="getRolesByAid" parameterType="string" resultMap="RoleMapper">
+		select r.rid,rolename,description from roles r
+							join roles_authority ra on r.rid=ra.rid
+							where aid=#{aid}
+	</select>
+</mapper>

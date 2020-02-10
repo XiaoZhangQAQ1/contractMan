@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.UserMapper">
+	<resultMap type="com.shiro.entity.User" id="userMapper" >
+		<id column="uid" property="uid"/>
+		<result column="uname" property="uName"/>
+		<result column="password" property="password"/>
+		<result column="tel" property="tel"/>
+		<result column="salt" property="salt"/>
+		<result column="logindate" property="loginDate"/>
+		<result column="createdate" property="createDate"/>
+		<result column="status" property="status"/>
+		<result column="email" property="eMail"/>
+		<collection property="roleList" column="uid" fetchType="lazy" select="com.dao.RoleMapper.getRolesByUid"/>
+	</resultMap>
+	
+	
+	<insert id="insertUser" useGeneratedKeys="true" keyProperty="uid" parameterType="com.shiro.entity.User">
+		insert into user_info(uid,uname,password,tel,salt,email,createdate) values (#{uid},#{uName},#{password},#{tel},#{salt},#{eMail},#{createDate})
+	</insert>
+	<update id="freezeUser">
+		update user_info set status=#{status} where uid=#{uid}
+	</update>
+	<select id="getUserByUid" parameterType="String" resultMap="userMapper">
+		select uid,uname,tel,password,salt,status,logindate,createdate,email from user_info where uid=#{uid} or email=#{uid}
+	</select>
+	<select id="getUsers" resultMap="userMapper">
+		select uid,uname,tel,password,salt,status,logindate,createdate,email from user_info where 1=1
+		<if test="uid != null and uid != ''">
+			AND uid = #{uid}
+		</if>
+		<if test="uName != null and uName != ''">
+			AND uname = #{uName}
+		</if>
+		<if test="tel != null and tel != ''">
+			AND tel = #{tel}
+		</if>
+		<if test="eMail != null and eMail !=''">
+			AND email = #{eMail}
+		</if>
+	</select>
+	<select id="getUserByRid" parameterType="String" resultMap="userMapper">
+		select u.uid,uname,tel,password,salt,status,logindate,createdate,email from user_info u 
+		join users_roles ur on u.uid = ur.uid
+		where ur.rid = #{rid}
+	</select>
+	<update id="updateUserPass" parameterType="user">
+		update user_info set password=#{password},salt=#{salt} where uid=#{uid}
+	</update>
+	<update id="updateUserLoginDate" parameterType="user">
+		update user_info set logindate=#{loginDate} where uid=#{uid}
+	</update>
+	<update id="updateUserInfo" parameterType="user">
+		update user_info set uname=#{uName},tel=#{tel} where uid=#{uid}
+	</update>
+	<delete id="deleteUserRole">
+		delete from users_roles where uid = #{uid}
+	</delete>
+	<insert id="insertUserRole">
+		insert into users_roles(rid,uid) values(#{rid},#{uid}) 
+	</insert>
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.ConApproveMapper">
+	<resultMap type="com.contract.entity.ConApprove" id="conApproveMapper">
+		<id column="cno" property="cno"/>
+		<id column="apvtm" property="apvtm"/>
+		<id column="uid" property="uid"/>
+		<result column="content" property="content"/>
+		<result column="result" property="result"/>
+		<result column="flag" property="flag"/>
+		<result column="operation" property="operation"/>
+		<result column="touid" property="touid"/>
+	</resultMap>
+	<select id="getApproveByCno" parameterType="String" resultMap="conApproveMapper">
+		select cno,uid,content,result,flag,apvtm,operation,touid from cnt_apv where cno=#{cno} ORDER BY apvtm DESC LIMIT 1
+	</select>
+	<select id="getApprovesByCno" resultMap="conApproveMapper">
+		select cno,uid,content,result,flag,apvtm,operation,touid from cnt_apv where cno=#{cno} ORDER BY apvtm
+	</select>
+	<update id="cryApvSumbitUpdate">
+		update cnt_apv set flag=0 where cno=#{cno} 
+	</update>
+	<insert id="cryApvSumbitInsert" parameterType="com.contract.entity.ConApprove">
+		insert into cnt_apv(cno,uid,content,result,flag,operation,touid) values (#{cno},#{uid},#{content},#{result},#{flag},#{operation},#{touid})
+	</insert>
+	<update id="cryApvBackUpdate">
+		update cnt_apv set touid=0 where cno=#{cno} 
+	</update>
+	<delete id="deleteApvByUid">
+		delete from cnt_apv where uid=#{uid}
+	</delete>
+	
+</mapper>

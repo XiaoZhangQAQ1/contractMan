@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.PermissionMapper">
+	<resultMap type="com.shiro.entity.Permission" id="perMapper">
+		<id column="aid" property="aid" />
+	    <result column="aunm" property="auNm" />
+	    <result column="url" property="url" />
+	    <result column="description" property="description"/>
+	    <collection property="roleList" column="aid" fetchType="lazy" select="com.dao.UserMapper.getUserByRid"/>
+	</resultMap>
+	<select id="getPermissionByRid" parameterType="String" resultMap="perMapper">
+		select a.aid,aunm,url,description from authority a
+							join roles_authority ra on a.aid=ra.aid
+							where rid=#{rid}
+	</select>
+	<select id="getUrlById" parameterType="String" resultType="string">
+		select url from authority a 
+						join roles_authority ra on a.aid=ra.aid
+						join users_roles ur on  ur.rid = ra.rid
+						where uid=#{id}
+	</select>
+</mapper>

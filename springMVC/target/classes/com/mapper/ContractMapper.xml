@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.ContractMapper">
+	 <resultMap type="com.contract.entity.Contract" id="contractMapper">
+		<id column="cno" property="cno"/>
+		<result column="tpcd" property="tpcd"/>
+		<result column="fcno" property="fcno"/>
+		<result column="cnm" property="cnm"/>
+		<result column="fpnm" property="fpnm"/>
+		<result column="sgtm" property="sgtm"/>
+		<result column="amt" property="amt"/>
+		<result column="adcd" property="adcd"/>
+		<result column="paytm" property="paytm"/>
+		<result column="faddr" property="faddr"/>
+		<result column="laddr" property="laddr"/>
+		<association property="addv" column="adcd" select="com.dao.AddvMapper.getAddvByAdcd"/>
+		<association property="conType" column="tpcd" select="com.dao.ConTypeMapper.getTypeByTpcd"/>
+		<collection property="conApprove" column="cno" fetchType="lazy" select="com.dao.ConApproveMapper.getApproveByCno"/>
+		<collection property="conAppendix" column="cno" fetchType="lazy" select="com.dao.ConAppendixMapper.getApxByCno"/>
+	</resultMap> 
+	<resultMap type="com.contract.entity.Contract" id="contractMapper1">
+		<id column="cno" property="cno"/>
+		<result column="tpcd" property="tpcd"/>
+		<result column="fcno" property="fcno"/>
+		<result column="cnm" property="cnm"/>
+		<result column="fpnm" property="fpnm"/>
+		<result column="sgtm" property="sgtm"/>
+		<result column="amt" property="amt"/>
+		<result column="adcd" property="adcd"/>
+		<result column="paytm" property="paytm"/>
+		<result column="faddr" property="faddr"/>
+		<result column="laddr" property="laddr"/>
+		<association property="addv" column="adcd" select="com.dao.AddvMapper.getAddvByAdcd"/>
+		<association property="conType" column="tpcd" select="com.dao.ConTypeMapper.getTypeByTpcd"/>
+		<collection property="conApprove" column="cno" fetchType="lazy" select="com.dao.ConApproveMapper.getApprovesByCno"/>
+		<collection property="conAppendix" column="cno" fetchType="lazy" select="com.dao.ConAppendixMapper.getApxByCno"/>
+	</resultMap> 
+	<select id="getContract" resultMap="contractMapper">
+		select cno,tpcd,fcno,cnm,fpnm,sgtm,amt,adcd,paytm,faddr,laddr from cnt_info 
+		where 1=1
+		
+		<if test="cno != null and cno != ''">
+			AND cno = #{cno}
+		</if>
+		<if test="cnm != null and cnm != ''">
+			AND cnm = #{cnm}
+		</if>
+		<if test="tpcd != null and tpcd != ''">
+			AND tpcd = #{tpcd}
+		</if>
+		<if test="startDate != null and startDate !=''">
+			AND SGTM  &gt; #{startDate}
+		</if>
+		<if test="endDate != null and endDate !=''">
+			AND SGTM &lt; #{endDate}
+		</if>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select> 
+	
+	<select id="getContractOver" resultMap="contractMapper">
+		select DISTINCT ci.cno,tpcd,fcno,cnm,fpnm,sgtm,amt,adcd,paytm,faddr,laddr from cnt_info ci
+		left join cnt_apv ca on ca.cno = ci.cno where result=4
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	
+	
+	<select id="getApproves" resultMap="contractMapper1">
+		select cno,tpcd,fcno,cnm,fpnm,sgtm,amt,adcd,paytm,faddr,laddr from cnt_info 
+		where cno=#{cno}
+	</select>
+	
+	<select id="getContractByUser" resultMap="contractMapper">
+		select ci.cno,tpcd,fcno,cnm,fpnm,sgtm,amt,adcd,paytm,faddr,laddr from cnt_info ci
+		left join cnt_apv ca on ca.cno = ci.cno
+		left join user_info ui on ca.touid=ui.uid
+		where ca.touid = #{uid} and flag=1 order by apvtm DESC 
+	</select>
+	
+	<select id="getNewCrt" resultMap="contractMapper1">
+		select cno,tpcd,fcno,cnm,fpnm,sgtm,amt,adcd,paytm,faddr,laddr from cnt_info order by sgtm desc limit 5
+	</select>
+	
+	<select id="selectCount" resultType="int">
+		select count(*) from cnt_info where 1=1
+		<if test="cno != null and cno != ''">
+			AND cno = #{cno}
+		</if>
+		<if test="cnm != null and cnm != ''">
+			AND cnm = #{cnm}
+		</if>
+		<if test="tpcd != null and tpcd != ''">
+			AND tpcd = #{tpcd}
+		</if>
+		<if test="startDate != null and startDate !=''">
+			AND SGTM  &gt; #{startDate}
+		</if>
+		<if test="endDate != null and endDate !=''">
+			AND SGTM &lt; #{endDate}
+		</if>
+	</select>
+		
+	<select id="selectOverCount" resultType="int">
+		select count(*) from cnt_info ci left join cnt_apv ca on ca.cno = ci.cno where result=4
+	</select>
+	
+	<insert id="insertCrt" parameterType="com.contract.entity.Contract">
+		insert into cnt_info(cno,tpcd,fpnm,adcd,amt,cnm) values (#{cno},#{tpcd},#{fpnm},#{adcd},#{amt},#{cnm})
+	</insert>
+	
+	<delete id="deleteCrt">
+		delete from cnt_info where cno=#{cno}
+	</delete>
+	
+	<update id="updateCrt">
+		update cnt_info set cnm = #{cnm} , fpnm=#{fpnm},amt=#{amt} where cno = #{cno}
+	</update>
+	<update id="updateCrtFaddr">
+		update cnt_info set faddr = #{faddr} where cno = #{cno}
+	</update>
+</mapper>

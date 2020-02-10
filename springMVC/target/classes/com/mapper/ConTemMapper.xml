@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.ConTemMapper">
+	<resultMap type="com.contract.entity.ConTemplate" id="conTemMapper">
+		<id column="mdlCd" property="mdlCd"/>
+		<result column="mdlNm" property="mdlNm"/>
+		<result column="mdlAddr" property="mdlAddr"/>
+		<result column="mdlUrl" property="mdlUrl"/>
+	</resultMap>
+	<select id="getTemplateByMdlcd" parameterType="String" resultMap="conTemMapper">
+		select mdlcd,mdlNm,mdlAddr,mdlurl from cnt_mdl where mdlcd=#{mdlcd}
+	</select>
+</mapper>

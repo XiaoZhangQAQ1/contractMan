@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.ConTypeMapper">
+	<resultMap type="com.contract.entity.ConType" id="conTypeMapper">
+		<id column="tpCd" property="tpCd"/>
+		<result column="tpNm" property="tpNm"/>
+		<result column="mdlCd" property="mdlCd"/>
+		<association property="conTemplate" column="mdlCd" select="com.dao.ConTemMapper.getTemplateByMdlcd"/>
+	</resultMap>
+	<select id="getTypeByTpcd" parameterType="String" resultMap="conTypeMapper">
+		select tpCd,tpNm,mdlCd from cnt_tp where tpCd=#{tpCd}
+	</select>
+	
+	<select id="getType" resultMap="conTypeMapper">
+		select tpCd,tpNm,mdlCd from cnt_tp
+	</select>
+</mapper>

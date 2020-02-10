@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.DataAnalyseMapper">
+	<select id="getCntTypeData" resultType="map">
+		select tpnm as tpnm,count(*) as total from cnt_info ci JOIN cnt_tp cp on ci.TPCD=cp.TPCD GROUP BY cp.tpcd
+	</select>
+	<select id="getAddvData" resultType="map">
+		select tpnm as tpnm,count(*) as total from cnt_info ci join addv ad on ci.ADCD = ad.ADCD GROUP BY ci.ADCD
+	</select>
+	<select id="getCntMyData" resultType="map">
+		select month(sgtm) as month,SUM(AMT) as total,TPNM as type from cnt_info ci JOIN cnt_tp ct on ci.TPCD=ct.TPCD GROUP BY MONTH(sgtm),TPNM
+	</select>
+	<select id="getCntPft" resultType="map">
+		select month(sgtm) as month,
+		SUM(AMT) as shouru,
+		(select IFNULL(SUM(AMT),0) from cnt_info ci2 JOIN cnt_tp ct2 on ci2.TPCD=ct2.TPCD where ci2.TPCD in('b1','b2') and month=month(sgtm)) as zhichu,
+		SUM(AMT)-(select IFNULL(SUM(AMT),0) from cnt_info ci2 JOIN cnt_tp ct2 on ci2.TPCD=ct2.TPCD where ci2.TPCD in('b1','b2') and month=month(sgtm)) as 'profit' 
+		from cnt_info ci JOIN cnt_tp ct on ci.TPCD=ct.TPCD 
+		where ci.TPCD in('s1','s2','s3','s4','s5') GROUP BY MONTH(sgtm)
+	</select>
+</mapper>

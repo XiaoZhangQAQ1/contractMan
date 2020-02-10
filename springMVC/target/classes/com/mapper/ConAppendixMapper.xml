@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.ConAppendixMapper">
+	<resultMap type="com.contract.entity.ConAppendix" id="conApxMapper">
+		<id column="id" property="id"/>
+		<result column="cno" property="cno"/>
+		<result column="date" property="date"/>
+		<result column="addr" property="addr"/>
+		<result column="apxname" property="apxName"/>
+	</resultMap>
+	<select id="getApxByCno" resultMap="conApxMapper">
+		select id,cno,date,addr,apxname from cnt_apx where cno=#{cno}
+	</select>
+	<select id="getApxByid" resultMap="conApxMapper">
+		select id,cno,date,addr,apxname from cnt_apx where id=#{id}
+	</select>
+	<delete id="deleteApxByid">
+		delete from cnt_apx where id=#{id}
+	</delete>
+	<insert id="insertApx">
+		insert into cnt_apx(cno,addr,apxname) values (#{cno},#{addr},#{apxName})
+	</insert>
+	<update id="updateApx">
+		update cnt_apx set addr=#{addr},date=current_timestamp where cno=#{cno} and date=#{date}
+	</update>
+</mapper>
